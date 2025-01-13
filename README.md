@@ -38,9 +38,15 @@ brew install --cask pb
 Add the following function to your shell configuration file (e.g., `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile`):
 
 ```bash
-function notifyme() {
-    "$@" && pb push "✅ Task '$*' completed!" || pb push "❌ Task '$*' failed!"
+notifyme() {
+    "$@"  # Execute the provided command
+    if [ $? -eq 0 ]; then
+        pb push "✅ Task '$*' completed!"
+    else
+        pb push "❌ Task '$*' failed!"
+    fi
 }
+
 ```
 
 Reload your shell configuration:
