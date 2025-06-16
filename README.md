@@ -39,12 +39,27 @@ Add the following function to your shell configuration file (e.g., `~/.bashrc`, 
 
 ```bash
 notifyme() {
-    "$@"  # Execute the provided command
-    if [ $? -eq 0 ]; then
-        pb push "✅ Task '$*' completed!"
-    else
-        pb push "❌ Task '$*' failed!"
+    local pb="/Users/sumedh/Library/Python/3.9/bin/pb"  
+
+    # Handle direct message mode
+    if [[ "$1" == "-m" && -n "$2" ]]; then
+        local msg="$2"
+        PYTHONWARNINGS=ignore "$pb" push "$msg"
+        return
     fi
+
+    # Otherwise, run the given command
+    "$@"
+    local status=$? #The Status code of the failed command
+    local cmd="$*"
+    
+    PYTHONWARNINGS=ignore "$pb" push "$(
+        if [ $status -eq 0 ]; then
+            echo "✅ [Task Completed!]::  $cmd"
+        else
+            echo "❌ [Task Failed!]::  $cmd"
+        fi
+    )"
 }
 
 ```
